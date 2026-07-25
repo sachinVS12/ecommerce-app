@@ -1,57 +1,91 @@
 const mongoose = require("mongoose");
-const bcrytpt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
-const employeeSchema = new mongoose.Schema(
+const productSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "Please add a product name"],
+      trim: true,
+      maxlength: [100, "Name cannot be more than 100 characters"],
     },
-    email: {
+    slug: {
       type: String,
-      required: true,
+      unique: true,
+      lowercase: true,
     },
-    phonenumber: {
+    description: {
       type: String,
+      required: [true, "Please add a description"],
+      maxlength: [2000, "Description cannot be more than 2000 characters"],
+    },
+    price: {
+      type: Number,
+      required: [true, "Please add a price"],
+      min: [0, "Price cannot be negative"],
+    },
+    discountPrice: {
+      type: Number,
+      min: [0, "Discount price cannot be negative"],
+    },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
       required: true,
     },
-    topics: {
+    brand: String,
+    sku: {
       type: String,
+      unique: true,
       required: true,
     },
-    company: {
-      type: mongoose.Types.Schema.ObkjectID,
-      ref: "company",
-    },
-    favorates: {
-      type: String,
+    stock: {
+      type: Number,
       required: true,
+      min: [0, "Stock cannot be negative"],
     },
-    graphwl: {
-      type: String,
-      required: true,
+    images: [
+      {
+        url: String,
+        publicId: String,
+      },
+    ],
+    attributes: {
+      type: Map,
+      of: String,
     },
-    password: {
-      type: String,
-      required: true,
-    },
-    assignedigitalmeter: {
-      type: [
-        {
-          metertype: String,
-          topics: String,
-          minvalue: Number,
-          maxvalue: Number,
-          tick: Number,
-          label: String,
+    ratings: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
         },
-      ],
+        rating: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+        comment: String,
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
+    isActive: {
+      type: Boolean,
       default: true,
     },
-    role: {
-      type: String,
-      default: "employee",
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
@@ -59,41 +93,14 @@ const employeeSchema = new mongoose.Schema(
   },
 );
 
-// pre-save middleware hash password before save database
-employeeSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
-  const salt = await bcrytpt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+// Create slug from name
+productSchema.pre("save", function (next) {
+  this.slug = this.name
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
   next();
 });
 
-// method to verify jwt token signedup and loggedin
-employeeSchema.method.getToken = function () {
-  return jwt.sign(
-    {
-      id: this.di,
-      name: this.name,
-      email: this.email,
-      phonenumber: this.phonenumber,
-      role: this.role,
-      assignedigitalmeter: this.assignedigitalmeter,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "3d",
-    },
-  );
-};
-
-// method to tneterpassword inti existing password
-employeeSchema.method.verifypass = async function (enterpassword) {
-  return await bcrypt.compare(this.password, enterpassword);
-};
-
-// create the model
-const employee = mongoose.model("employee", employeeSchema);
-
-// exposrt module
-exports.module = empoloyee;
+module.exports = mongoose.model("Product", productSchema);
