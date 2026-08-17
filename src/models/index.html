@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ganesh Festival Live Map - Visual Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f0eb;
+            color: #333;
+            padding: 40px;
+        }
+        
+        .report-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #FF6B00 0%, #FF9933 50%, #FFD700 100%);
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '🐘';
+            font-size: 80px;
+            position: absolute;
+            right: 40px;
+            top: 20px;
+            opacity: 0.3;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.95);
+            font-size: 20px;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            color: #FF6B00;
+            border-bottom: 3px solid #FF9933;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .mockup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .mockup-card {
+            background: #faf8f6;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        
+        .mockup-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .mockup-image {
+            background: white;
+            padding: 20px;
+            border-bottom: 2px solid #f0e8e0;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mockup-image .screen {
+            width: 100%;
+            background: #e8e0d8;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .mockup-image .screen .browser-bar {
+            background: #ddd;
+            height: 30px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 8px;
+        }
+        
+        .mockup-image .screen .browser-bar .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .mockup-image .screen .browser-bar .dot.red { background: #ff5f57; }
+        .mockup-image .screen .browser-bar .dot.yellow { background: #ffbd2e; }
+        .mockup-image .screen .browser-bar .dot.green { background: #28c840; }
+        
+        .mockup-image .screen .browser-bar .url {
+            background: white;
+            flex: 1;
+            height: 20px;
+            border-radius: 4px;
+            margin: 0 10px;
+            padding: 0 10px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            color: #666;
+        }
+        
+        .mockup-content {
+            padding: 15px;
+            background: white;
+        }
+        
+        .mockup-content h3 {
+            color: #FF6B00;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .mockup-content p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* Map Mockup */
+        .map-mockup {
+            background: linear-gradient(135deg, #f0e8e0 0%, #e0d8d0 100%);
+            border-radius: 8px;
+            height: 350px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-mockup .map-content {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .map-mockup .map-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .map-mockup .map-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .map-mockup .map-controls button {
+            background: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .map-mockup .marker-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        .map-mockup .marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        .map-mockup .marker.orange { background: #FF6B00; color: white; }
+        .map-mockup .marker.green { background: #4CAF50; color: white; }
+        .map-mockup .marker.blue { background: #2196F3; color: white; }
+        .map-mockup .marker.red { background: #f44336; color: white; }
+        .map-mockup .marker.purple { background: #9C27B0; color: white; }
+        .map-mockup .marker.gold { background: #FFD700; color: #333; }
+        
+        .map-mockup .marker .pulse-ring {
+            position: absolute;
+            border: 2px solid rgba(255,107,0,0.4);
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            animation: ripple 1.5s infinite;
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .mockup-image .screen .map-mockup .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .mockup-image .screen .map-mockup .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            margin: 2px 0;
+        }
+        
+        .mockup-image .screen .map-mockup .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        /* Pandal Card Mockup */
+        .pandal-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .pandal-card .card-image {
+            height: 150px;
+            background: linear-gradient(135deg, #FF6B00, #FF9933);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            position: relative;
+        }
+        
+        .pandal-card .card-image .crowd-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,0,0,0.8);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .pandal-card .card-body {
+            padding: 15px;
+        }
+        
+        .pandal-card .card-body h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .pandal-card .card-body .address {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        
+        .pandal-card .card-body .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #555;
+            padding: 5px 0;
+            border-bottom: 1px solid #f0e8e0;
+        }
+        
+        .pandal-card .card-body .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .pandal-card .card-body .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .pandal-card .card-body .actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .pandal-card .card-body .actions .btn-primary {
+            background: #FF6B00;
+            color: white;
+        }
+        
+        .pandal-card .card-body .actions .btn-secondary {
+            background: #f0e8e0;
+            color: #333;
+        }
+        
+        /* Dashboard Mockup */
+        .dashboard-mockup {
+            background: #f5f0eb;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 300px;
+        }
+        
+        .dashboard-mockup .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-mockup .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .dashboard-mockup .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #FF6B00;
+        }
+        
+        .dashboard-mockup .stat-card .label {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .dashboard-mockup .chart-placeholder {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            height: 150px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+        }
+        
+        .dashboard-mockup .chart-bar {
+            width: 40px;
+            background: linear-gradient(to top, #FF6B00, #FF9933);
+            border-radius: 6px 6px 0 0;
+            transition: height 0.5s;
+        }
+        
+        /* Notification Mockup */
+        .notification-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0e8e0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-item .icon {
+            font-size: 24px;
+        }
+        
+        .notification-item .content {
+            flex: 1;
+        }
+        
+        .notification-item .content .title {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .notification-item .content .message {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .notification-item .time {
+            font-size: 11px;
+            color: #999;
+        }
+        
+        .notification-item.unread {
+            background: #fff5ee;
+        }
+        
+        .notification-item .badge {
+            background: #FF6B00;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        /* Mobile Mockup */
+        .mobile-frame {
+            max-width: 375px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border-radius: 30px;
+            padding: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .mobile-frame .screen-content {
+            background: #f5f0eb;
+            border-radius: 20px;
+            padding: 16px;
+            min-height: 650px;
+            overflow: hidden;
+        }
+        
+        .mobile-frame .screen-content .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .mobile-frame .screen-content .search-bar {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .mobile-frame .screen-content .search-bar input {
+            border: none;
+            flex: 1;
+            outline: none;
+            background: transparent;
+        }
+        
+        .mobile-frame .screen-content .category-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 5px 0;
+            margin-bottom: 12px;
+        }
+        
+        .mobile-frame .screen-content .category-chip {
+            background: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            cursor: pointer;
+        }
+        
+        .mobile-frame .screen-content .category-chip.active {
+            background: #FF6B00;
+            color: white;
+        }
+        
+        .mobile-frame .screen-content .mobile-map {
+            background: linear-gradient(135deg, #e0d8d0, #d0c8c0);
+            border-radius: 12px;
+            height: 250px;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mobile-frame .screen-content .mobile-map .marker-sm {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .mobile-frame .screen-content .pandal-list .pandal-item {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+        
+        .mobile-frame .screen-content .pandal-list .pandal-item .thumb {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #FF6B00, #FF9933);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .mobile-frame .screen-content .pandal-list .pandal-item .info {
+            flex: 1;
+        }
+        
+        .mobile-frame .screen-content .pandal-list .pandal-item .info .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .mobile-frame .screen-content .pandal-list .pandal-item .info .meta {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .mobile-frame .screen-content .pandal-list .pandal-item .info .crowd {
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .mobile-frame .screen-content .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 8px 0;
+            border-radius: 12px;
+            margin-top: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .mobile-frame .screen-content .bottom-nav .nav-item {
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+        }
+        
+        .mobile-frame .screen-content .bottom-nav .nav-item .icon {
+            font-size: 20px;
+            display: block;
+        }
+        
+        .mobile-frame .screen-content .bottom-nav .nav-item.active {
+            color: #FF6B00;
+        }
+        
+        /* Responsive */
+        @media print {
+            body {
+                background: white;
+                padding: 20px;
+            }
+            
+            .mockup-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .section {
+                page-break-after: always;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .mockup-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🐘 Ganesh Festival Live Map</h1>
+            <p>Complete Visual Demonstration • Modern Festival Management Platform</p>
+            <div style="margin-top: 20px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <span style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; color: white;">Interactive Map</span>
+                <span style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; color: white;">Real-time Updates</span>
+                <span style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; color: white;">Emergency Services</span>
+                <span style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; color: white;">Analytics Dashboard</span>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Section 1: Interactive Map -->
+            <div class="section">
+                <h2 class="section-title">🗺️ Interactive Map Interface</h2>
+                <div class="mockup-grid">
+                    <div class="mockup-card">
+                        <div class="mockup-image">
+                            <div class="screen">
+                                <div class="browser-bar">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                    <div class="url">🔒 ganeshfestivallivemap.com/map</div>
+                                </div>
+                                <div class="map-mockup" style="height: 350px;">
+                                    <div class="map-content">
+                                        <div class="map-header">
+                                            <div style="background: white; padding: 6px 14px; border-radius: 6px; font-size: 14px; font-weight: 600;">📍 Ganesh Pandals Near You</div>
+                                            <div class="map-controls">
+                                                <button>📍 My Location</button>
+                                                <button>🔍 Search</button>
+                                                <button>🌙 Dark</button>
+                                            </div>
+                                        </div>
+                                        <div class="marker-container">
+                                            <div class="marker orange" style="top: 20%; left: 30%;">
+                                                <span>🛕</span>
+                                                <div class="pulse-ring"></div>
+                                            </div>
+                                            <div class="marker green" style="top: 45%; left: 50%;">🍛</div>
+                                            <div class="marker blue" style="top: 35%; left: 65%;">🚗</div>
+                                            <div class="marker red" style="top: 60%; left: 35%;">🏥</div>
+                                            <div class="marker purple" style="top: 25%; left: 75%;">🚔</div>
+                                            <div class="marker gold" style="top: 70%; left: 60%;">📹</div>
+                                            <div class="marker orange" style="top: 50%; left: 20%;">
+                                                <span>🛕</span>
+                                                <div class="pulse-ring"></div>
+                                            </div>
+                                            <div class="marker green" style="top: 15%; left: 50%;">💧</div>
+                                            <div class="marker blue" style="top: 75%; left: 45%;">🚌</div>
+                                            
+                                            <!-- User location -->
+                                            <div class="marker blue" style="top: 50%; left: 45%; width: 40px; height: 40px; border: 3px solid white;">
+                                                <span>📍</span>
+                                            </div>
+                                            
+                                            <div class="legend">
+                                                <div class="legend-item"><span class="legend-color" style="background: #FF6B00;"></span> Pandal</div>
+                                                <div class="legend-item"><span class="legend-color" style="background: #4CAF50;"></span> Food</div>
+                                                <div class="legend-item"><span class="legend-color" style="background: #2196F3;"></span> Parking</div>
+                                                <div class="legend-item"><span class="legend-color" style="background: #f44336;"></span> Medical</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup-content">
+                            <h3>Full-Screen Interactive Map</h3>
+                            <p>Real-time Google Maps integration with custom markers for different categories. Shows crowd levels, user location, and live updates.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mockup-card">
+                        <div class="mockup-image">
+                            <div class="screen">
+                                <div class="browser-bar">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                    <div class="url">🔒 ganeshfestivallivemap.com/map</div>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
+                                        <span style="background: #FF6B00; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px;">All Categories</span>
+                                        <span style="background: #f0e8e0; padding: 4px 12px; border-radius: 20px; font-size: 11px;">🛕 Pandals</span>
+                                        <span style="background: #f0e8e0; padding: 4px 12px; border-radius: 20px; font-size: 11px;">🍛 Food</span>
+                                        <span style="background: #f0e8e0; padding: 4px 12px; border-radius: 20px; font-size: 11px;">🚗 Parking</span>
+                                    </div>
+                                    <!-- Pandal Card -->
+                                    <div class="pandal-card">
+                                        <div class="card-image" style="background: linear-gradient(135deg, #FF6B00, #FF9933);">
+                                            <span>🐘</span>
+                                            <span class="crowd-badge" style="background: #FF6B00;">🔴 Very Crowded</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4>Lalbaugcha Raja</h4>
+                                            <div class="address">📍 Lalbaug, Mumbai - 400012</div>
+                                            <div class="info-row">
+                                                <span>👥 Crowd Level</span>
+                                                <span style="color: #f44336; font-weight: 600;">Very High</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span>🕐 Opening Hours</span>
+                                                <span>06:00 - 23:00</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span>⭐ Rating</span>
+                                                <span>4.8 ★ (2.3k reviews)</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span>📅 Aarti Timings</span>
+                                                <span>06:30, 19:00</span>
+                                            </div>
+                                            <div class="actions">
+                                                <button class="btn-primary">📍 Directions</button>
+                                                <button class="btn-secondary">📞 Contact</button>
+                                                <button class="btn-secondary">❤️ Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup-content">
+                            <h3>Pandal Information Card</h3>
+                            <p>Complete pandal details including crowd level, timings, ratings, and quick actions like directions and contact.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 2: Dashboard Views -->
+            <div class="section">
+                <h2 class="section-title">📊 Admin & Analytics Dashboard</h2>
+                <div class="mockup-grid">
+                    <div class="mockup-card">
+                        <div class="mockup-image">
+                            <div class="screen">
+                                <div class="browser-bar">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                    <div class="url">🔒 admin.ganeshfestivallivemap.com/dashboard</div>
+                                </div>
+                                <div class="dashboard-mockup">
+                                    <div class="stats-grid">
+                                        <div class="stat-card">
+                                            <div class="number">142</div>
+                                            <div class="label">Total Pandals</div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="number">24.5K</div>
+                                            <div class="label">Active Users</div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="number">85%</div>
+                                            <div class="label">Crowd Capacity</div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="number">1.2M</div>
+                                            <div class="label">Total Visitors</div>
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
+                                        <div style="background: white; padding: 15px; border-radius: 10px;">
+                                            <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px;">📈 Visitor Trends</div>
+                                            <div class="chart-placeholder" style="height: 120px;">
+                                                <div class="chart-bar" style="height: 60%; background: linear-gradient(to top, #FF6B00, #FF9933);"></div>
+                                                <div class="chart-bar" style="height: 80%; background: linear-gradient(to top, #FF6B00, #FF9933);"></div>
+                                                <div class="chart-bar" style="height: 45%; background: linear-gradient(to top, #FF6B00, #FF9933);"></div>
+                                                <div class="chart-bar" style="height: 95%; background: linear-gradient(to top, #FF6B00, #FF9933);"></div>
+                                                <div class="chart-bar" style="height: 70%; background: linear-gradient(to top, #FF6B00, #FF9933);"></div>
+                                                <div class="chart-bar" style="height: 100%; background: linear-gradient(to top, #FF6B00, #FF9933);"></div>
+                                                <div class="chart-bar" style="height: 55%; background: linear-gradient(to top, #FF6B00, #FF9933);"></div>
+                                                <div class="chart-bar" style="height: 88%; background: linear-gradient(to top, #FF6B00, #FF9933);"></div>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #999; margin-top: 4px;">
+                                                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span>
+                                                <span>Fri</span><span>Sat</span><span>Sun</span>
+                                            </div>
+                                        </div>
+                                        <div style="background: white; padding: 15px; border-radius: 10px;">
+                                            <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px;">🔥 Top Pandals</div>
+                                            <div style="font-size: 12px; padding: 4px 0; border-bottom: 1px solid #f0e8e0;">
+                                                <span style="color: #FF6B00;">1.</span> Lalbaugcha Raja
+                                                <span style="float: right; color: #999;">12.5K</span>
+                                            </div>
+                                            <div style="font-size: 12px; padding: 4px 0; border-bottom: 1px solid #f0e8e0;">
+                                                <span style="color: #FF6B00;">2.</span> Ganesh Galli
+                                                <span style="float: right; color: #999;">8.2K</span>
+                                            </div>
+                                            <div style="font-size: 12px; padding: 4px 0; border-bottom: 1px solid #f0e8e0;">
+                                                <span style="color: #FF6B00;">3.</span> Andheri Cha Raja
+                                                <span style="float: right; color: #999;">6.7K</span>
+                                            </div>
+                                            <div style="font-size: 12px; padding: 4px 0;">
+                                                <span style="color: #FF6B00;">4.</span> Dadar Cha Raja
+                                                <span style="float: right; color: #999;">5.1K</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup-content">
+                            <h3>Admin Dashboard</h3>
+                            <p>Complete admin interface with real-time statistics, visitor analytics, top pandals, and crowd monitoring.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mockup-card">
+                        <div class="mockup-image">
+                            <div class="screen">
+                                <div class="browser-bar">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                    <div class="url">🔒 volunteer.ganeshfestivallivemap.com</div>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                        <span style="font-weight: 600;">Volunteer Dashboard</span>
+                                        <span style="background: #4CAF50; color: white; padding: 2px 10px; border-radius: 12px; font-size: 11px;">🟢 Online</span>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+                                        <div style="background: #f5f0eb; padding: 10px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 20px;">📍</div>
+                                            <div style="font-size: 11px; font-weight: 600;">Update Crowd</div>
+                                        </div>
+                                        <div style="background: #f5f0eb; padding: 10px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 20px;">📸</div>
+                                            <div style="font-size: 11px; font-weight: 600;">Upload Photo</div>
+                                        </div>
+                                        <div style="background: #f5f0eb; padding: 10px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 20px;">🚗</div>
+                                            <div style="font-size: 11px; font-weight: 600;">Parking Status</div>
+                                        </div>
+                                        <div style="background: #f5f0eb; padding: 10px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 20px;">🆘</div>
+                                            <div style="font-size: 11px; font-weight: 600;">Emergency Alert</div>
+                                        </div>
+                                    </div>
+                                    <div style="background: #f5f0eb; padding: 12px; border-radius: 8px;">
+                                        <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">📍 Live Location Sharing</div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <div style="width: 100%; height: 4px; background: #4CAF50; border-radius: 2px;"></div>
+                                            <span style="font-size: 11px; color: #4CAF50;">Sharing</span>
+                                        </div>
+                                        <div style="font-size: 11px; color: #666; margin-top: 5px;">Last updated: 2 seconds ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup-content">
+                            <h3>Volunteer Dashboard</h3>
+                            <p>Volunteer interface for updating crowd levels, uploading photos, managing parking, and emergency alerts.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 3: Mobile Experience -->
+            <div class="section">
+                <h2 class="section-title">📱 Mobile Experience</h2>
+                <div class="mockup-grid">
+                    <div class="mockup-card">
+                        <div class="mockup-image">
+                            <div class="mobile-frame">
+                                <div class="screen-content">
+                                    <div class="status-bar">
+                                        <span>9:41</span>
+                                        <span>📶 🔋 100%</span>
+                                    </div>
+                                    <div style="font-size: 16px; font-weight: 700; color: #FF6B00; margin-bottom: 8px;">🐘 Ganesh Map</div>
+                                    <div class="search-bar">
+                                        <span>🔍</span>
+                                        <input placeholder="Search pandals, locations...">
+                                    </div>
+                                    <div class="category-scroll">
+                                        <span class="category-chip active">All</span>
+                                        <span class="category-chip">🛕 Pandals</span>
+                                        <span class="category-chip">🍛 Food</span>
+                                        <span class="category-chip">🚗 Parking</span>
+                                        <span class="category-chip">🏥 Medical</span>
+                                        <span class="category-chip">🚔 Police</span>
+                                    </div>
+                                    <div class="mobile-map">
+                                        <div class="marker-sm orange" style="top: 25%; left: 20%;">🛕</div>
+                                        <div class="marker-sm green" style="top: 45%; left: 55%;">🍛</div>
+                                        <div class="marker-sm blue" style="top: 35%; left: 70%;">🚗</div>
+                                        <div class="marker-sm red" style="top: 60%; left: 30%;">🏥</div>
+                                        <div class="marker-sm" style="top: 50%; left: 45%; width: 32px; height: 32px; border: 2px solid #2196F3; background: rgba(33,150,243,0.2);">
+                                            <span style="font-size: 16px;">📍</span>
+                                        </div>
+                                        <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 6px; font-size: 10px;">
+                                            🟢 2.3 km away
+                                        </div>
+                                    </div>
+                                    <div class="pandal-list">
+                                        <div class="pandal-item">
+                                            <div class="thumb">🐘</div>
+                                            <div class="info">
+                                                <div class="name">Lalbaugcha Raja</div>
+                                                <div class="meta">📍 1.2 km • ⭐ 4.8</div>
+                                                <div class="crowd"><span style="color: #f44336;">●</span> Very Crowded</div>
+                                            </div>
+                                            <div style="font-size: 12px; color: #999;">12:30</div>
+                                        </div>
+                                        <div class="pandal-item">
+                                            <div class="thumb" style="background: linear-gradient(135deg, #4CAF50, #66BB6A);">🐘</div>
+                                            <div class="info">
+                                                <div class="name">Ganesh Galli</div>
+                                                <div class="meta">📍 2.8 km • ⭐ 4.5</div>
+                                                <div class="crowd"><span style="color: #FFC107;">●</span> Medium</div>
+                                            </div>
+                                            <div style="font-size: 12px; color: #999;">13:15</div>
+                                        </div>
+                                        <div class="pandal-item">
+                                            <div class="thumb" style="background: linear-gradient(135deg, #2196F3, #42A5F5);">🍛</div>
+                                            <div class="info">
+                                                <div class="name">Food Distribution</div>
+                                                <div class="meta">📍 0.8 km • 🕐 12:00-14:00</div>
+                                                <div class="crowd"><span style="color: #4CAF50;">●</span> Low</div>
+                                            </div>
+                                            <div style="font-size: 12px; color: #999;">Now</div>
+                                        </div>
+                                    </div>
+                                    <div class="bottom-nav">
+                                        <div class="nav-item active"><span class="icon">🏠</span>Home</div>
+                                        <div class="nav-item"><span class="icon">🗺️</span>Map</div>
+                                        <div class="nav-item"><span class="icon">❤️</span>Favorites</div>
+                                        <div class="nav-item"><span class="icon">🔔</span>Alerts</div>
+                                        <div class="nav-item"><span class="icon">👤</span>Profile</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup-content">
+                            <h3>Mobile App Interface</h3>
+                            <p>Fully responsive mobile experience with easy navigation, search, and quick access to pandal information.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mockup-card">
+                        <div class="mockup-image">
+                            <div class="screen">
+                                <div class="browser-bar">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                    <div class="url">🔒 ganeshfestivallivemap.com/notifications</div>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                        <span style="font-weight: 600;">🔔 Real-time Notifications</span>
+                                        <span style="background: #FF6B00; color: white; padding: 2px 10px; border-radius: 12px; font-size: 11px;">3 New</span>
+                                    </div>
+                                    <div class="notification-list">
+                                        <div class="notification-item unread">
+                                            <div class="icon">🕐</div>
+                                            <div class="content">
+                                                <div class="title">Aarti Started at Lalbaugcha Raja</div>
+                                                <div class="message">Morning Aarti begins at 6:30 AM. Join the divine experience!</div>
+                                                <span class="badge">New</span>
+                                            </div>
+                                            <div class="time">5 min ago</div>
+                                        </div>
+                                        <div class="notification-item unread">
+                                            <div class="icon">🚨</div>
+                                            <div class="content">
+                                                <div class="title">🚨 Crowd Alert: Andheri Cha Raja</div>
+                                                <div class="message">High crowd levels detected. Please plan your visit accordingly.</div>
+                                                <span class="badge">High</span>
+                                            </div>
+                                            <div class="time">15 min ago</div>
+                                        </div>
+                                        <div class="notification-item">
+                                            <div class="icon">🅿️</div>
+                                            <div class="content">
+                                                <div class="title">Parking Full at Ganesh Galli</div>
+                                                <div class="message">All parking spaces are occupied. Use alternative parking nearby.</div>
+                                            </div>
+                                            <div class="time">45 min ago</div>
+                                        </div>
+                                        <div class="notification-item">
+                                            <div class="icon">🍛</div>
+                                            <div class="content">
+                                                <div class="title">Food Distribution Started</div>
+                                                <div class="message">Free prasada distribution at 12:30 PM at all major pandals.</div>
+                                            </div>
+                                            <div class="time">1 hour ago</div>
+                                        </div>
+                                        <div class="notification-item">
+                                            <div class="icon">🌧️</div>
+                                            <div class="content">
+                                                <div class="title">Weather Warning</div>
+                                                <div class="message">Rain expected in the evening. Carry umbrellas for your visit.</div>
+                                            </div>
+                                            <div class="time">2 hours ago</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup-content">
+                            <h3>Real-time Notifications</h3>
+                            <p>Live alerts for Aarti timings, crowd updates, parking availability, food distribution, and emergency notifications.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 4: Emergency Services -->
+            <div class="section">
+                <h2 class="section-title">🚨 Emergency Services & Safety</h2>
+                <div class="mockup-grid">
+                    <div class="mockup-card">
+                        <div class="mockup-image">
+                            <div class="screen">
+                                <div class="browser-bar">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                    <div class="url">🔒 ganeshfestivallivemap.com/emergency</div>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <div style="background: #f44336; color: white; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px;">
+                                        <div style="font-size: 48px;">🆘</div>
+                                        <div style="font-size: 20px; font-weight: 700;">SOS Emergency</div>
+                                        <div style="font-size: 13px; opacity: 0.9;">Tap for immediate assistance</div>
+                                        <div style="margin-top: 10px; background: rgba(255,255,255,0.2); padding: 8px; border-radius: 8px; font-size: 14px;">
+                                            ⚡ Emergency services will be dispatched to your location
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                                        <div style="background: #f5f0eb; padding: 12px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 24px;">🚑</div>
+                                            <div style="font-size: 12px; font-weight: 600;">Ambulance</div>
+                                            <div style="font-size: 11px; color: #4CAF50;">✅ Available</div>
+                                        </div>
+                                        <div style="background: #f5f0eb; padding: 12px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 24px;">🚒</div>
+                                            <div style="font-size: 12px; font-weight: 600;">Fire Station</div>
+                                            <div style="font-size: 11px; color: #4CAF50;">✅ Available</div>
+                                        </div>
+                                        <div style="background: #f5f0eb; padding: 12px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 24px;">🚔</div>
+                                            <div style="font-size: 12px; font-weight: 600;">Police</div>
+                                            <div style="font-size: 11px; color: #4CAF50;">✅ On Patrol</div>
+                                        </div>
+                                        <div style="background: #f5f0eb; padding: 12px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 24px;">🏥</div>
+                                            <div style="font-size: 12px; font-weight: 600;">First Aid</div>
+                                            <div style="font-size: 11px; color: #4CAF50;">✅ 5 stations</div>
+                                        </div>
+                                    </div>
+                                    <div style="background: #f5f0eb; padding: 12px; border-radius: 8px;">
+                                        <div style="font-size: 13px; font-weight: 600;">📞 Emergency Contacts</div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid #ddd;">
+                                            <span>🚑 Ambulance</span>
+                                            <span style="color: #FF6B00;">108</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid #ddd;">
+                                            <span>🚔 Police</span>
+                                            <span style="color: #FF6B00;">100</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0;">
+                                            <span>🔥 Fire</span>
+                                            <span style="color: #FF6B00;">101</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup-content">
+                            <h3>Emergency Services</h3>
+                            <p>SOS button, emergency contacts, and real-time availability of medical, fire, and police services.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mockup-card">
+                        <div class="mockup-image">
+                            <div class="screen">
+                                <div class="browser-bar">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                    <div class="url">🔒 ganeshfestivallivemap.com/immersion</div>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="font-weight: 600;">🌊 Ganesh Immersion Tracking</span>
+                                        <span style="float: right; font-size: 12px; color: #999;">Live</span>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #e0f0ff, #b0d4ff); border-radius: 12px; padding: 15px; margin-bottom: 12px; position: relative; min-height: 100px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <div style="font-size: 14px; font-weight: 600;">🚚 Immersion Vehicle #1</div>
+                                                <div style="font-size: 12px; color: #555;">ETA: 15 min • 2.3 km</div>
+                                                <div style="font-size: 11px; color: #666;">📍 Approaching Chowpatty</div>
+                                            </div>
+                                            <div style="background: #FF6B00; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px;">🟢 Moving</div>
+                                        </div>
+                                        <div style="margin-top: 10px;">
+                                            <div style="display: flex; gap: 5px; align-items: center;">
+                                                <span style="font-size: 11px; color: #666;">Progress:</span>
+                                                <div style="flex: 1; height: 4px; background: #ddd; border-radius: 2px;">
+                                                    <div style="width: 65%; height: 100%; background: #FF6B00; border-radius: 2px;"></div>
+                                                </div>
+                                                <span style="font-size: 11px; color: #666;">65%</span>
+                                            </div>
+                                        </div>
+                                        <div style="position: absolute; right: 15px; bottom: 15px; background: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                            🚧 Road closure ahead
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                        <div style="background: #f5f0eb; padding: 10px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 18px;">📊</div>
+                                            <div style="font-size: 11px; font-weight: 600;">24 Vehicles</div>
+                                            <div style="font-size: 10px; color: #666;">Active Processions</div>
+                                        </div>
+                                        <div style="background: #f5f0eb; padding: 10px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 18px;">⏱️</div>
+                                            <div style="font-size: 11px; font-weight: 600;">45 min</div>
+                                            <div style="font-size: 10px; color: #666;">Avg. Immersion Time</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup-content">
+                            <h3>Immersion Tracking</h3>
+                            <p>Live tracking of Ganesh immersion processions, ETA, progress, and road closure updates.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 5: Key Features Overview -->
+            <div class="section">
+                <h2 class="section-title">⭐ Key Features</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div style="background: #faf8f6; padding: 20px; border-radius: 12px; text-align: center; border-left: 4px solid #FF6B00;">
+                        <div style="font-size: 40px;">🗺️</div>
+                        <h4 style="color: #FF6B00; margin: 10px 0 5px;">Interactive Map</h4>
+                        <p style="font-size: 13px; color: #666;">Full-screen Google Maps with custom markers, crowd levels, and real-time updates</p>
+                    </div>
+                    <div style="background: #faf8f6; padding: 20px; border-radius: 12px; text-align: center; border-left: 4px solid #4CAF50;">
+                        <div style="font-size: 40px;">📊</div>
+                        <h4 style="color: #4CAF50; margin: 10px 0 5px;">Live Analytics</h4>
+                        <p style="font-size: 13px; color: #666;">Real-time visitor statistics, crowd heatmaps, and popular pandal tracking</p>
+                    </div>
+                    <div style="background: #faf8f6; padding: 20px; border-radius: 12px; text-align: center; border-left: 4px solid #f44336;">
+                        <div style="font-size: 40px;">🆘</div>
+                        <h4 style="color: #f44336; margin: 10px 0 5px;">Emergency Services</h4>
+                        <p style="font-size: 13px; color: #666;">SOS button, emergency contacts, and real-time location of safety services</p>
+                    </div>
+                    <div style="background: #faf8f6; padding: 20px; border-radius: 12px; text-align: center; border-left: 4px solid #2196F3;">
+                        <div style="font-size: 40px;">🔔</div>
+                        <h4 style="color: #2196F3; margin: 10px 0 5px;">Real-time Alerts</h4>
+                        <p style="font-size: 13px; color: #666;">Push notifications for aarti timings, crowd updates, and emergency alerts</p>
+                    </div>
+                    <div style="background: #faf8f6; padding: 20px; border-radius: 12px; text-align: center; border-left: 4px solid #FFD700;">
+                        <div style="font-size: 40px;">👥</div>
+                        <h4 style="color: #FFD700; margin: 10px 0 5px;">Volunteer Management</h4>
+                        <p style="font-size: 13px; color: #666;">Dedicated volunteer dashboard for crowd monitoring and real-time updates</p>
+                    </div>
+                    <div style="background: #faf8f6; padding: 20px; border-radius: 12px; text-align: center; border-left: 4px solid #9C27B0;">
+                        <div style="font-size: 40px;">📱</div>
+                        <h4 style="color: #9C27B0; margin: 10px 0 5px;">Mobile Responsive</h4>
+                        <p style="font-size: 13px; color: #666;">Full functionality on all devices with touch-optimized interface</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div style="background: linear-gradient(135deg, #FF6B00, #FF9933); padding: 30px; border-radius: 12px; text-align: center; color: white;">
+                <div style="font-size: 32px;">🐘</div>
+                <h3 style="margin: 10px 0;">Ganesh Festival Live Map</h3>
+                <p style="opacity: 0.9;">Complete Festival Management Platform • Real-time • Secure • Mobile-friendly</p>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+                    <span>📍 100+ Pandals</span>
+                    <span>👥 50+ Volunteers</span>
+                    <span>🚨 24/7 Emergency</span>
+                    <span>📊 Live Analytics</span>
+                </div>
+                <div style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
+                    Made with ❤️ for Ganesh Festival • © 2024 All Rights Reserved
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Add print functionality
+        console.log('Ganesh Festival Live Map - Visual Demonstration Ready');
+        console.log('To print as PDF: Use Ctrl+P and select "Save as PDF"');
+    </script>
+</body>
+</html>
