@@ -13,6 +13,7 @@ const {
   forgotPassword,
 } = require("../controllers/authController");
 
+//auth.js
 router.post("/register", validateUserRegistration, register);
 router.post("/login", validateUserLogin, login);
 router.post("/logout", protect, logout);
