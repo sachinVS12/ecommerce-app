@@ -1,55 +1,100 @@
-let hello = "Hello World from Node.js";
-let justNode = hello.slice(17);
-console.log(`Who let the ${justNode} out?`);
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const compression = require("compression");
+const rateLimit = require("express-rate-limit");
 
-// let hell = "Hello World from Node.js";
-// let justNode = hellos.slice(17);
-// console.log(`Who let the ${justNode} out? `);
+const connectDB = require("./src/config/database");
+const redisClient = require("./src/config/redis");
 
-//publish code
-const mqtt = require("mqtt");
+// Import routes
+const authRoutes = require("./src/routes/authRoutes");
+const userRoutes = require("./src/routes/userRoutes");
+const productRoutes = require("./src/routes/productRoutes");
+const orderRoutes = require("./src/routes/orderRoutes");
+const categoryRoutes = require("./src/routes/categoryRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
 
-const broker = "mqtt://localhost:1883";
+const app = express();
 
-const options = {
-  username: "Sarayu",
-  password: "IOTteam@123",
-};
+// Connect to MongoDB
+connectDB();
 
-const topic = "Test/data";
+// Connect to Redis
+redisClient.connect();
 
-const client = mqtt.connect(broker, options);
+// Security middleware
+app.use(helmet());
 
-client.on("connect", () => {
-  console.log("Connected to MQTT broker");
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
+app.use("/api", limiter);
 
-  setInterval(() => {
-    let payload = "{";
+// Compression
+app.use(compression());
 
-    for (let i = 1; i <= 500; i++) {
-      // Random value with 2 decimal places
-      const value = (Math.random() * 100).toFixed(2);
+// CORS
+app.use(cors());
 
-      payload += `P${i},${value};`;
-    }
+// Body parser middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-    payload += "}";
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/admin", adminRoutes);
 
-    client.publish(topic, payload, { qos: 0 }, (err) => {
-      if (err) {
-        console.error("Publish error:", err);
-      } else {
-        console.log("Published:");
-        console.log(payload);
-      }
-    });
-  }, 1000);
+// Health check route
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+  });
 });
 
-client.on("error", (err) => {
-  console.error("Connection error:", err);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: "Something went wrong!",
+    error: process.env.NODE_ENV === "development" ? err.message : {},
+  });
 });
 
-client.on("close", () => {
-  console.log("Disconnected from MQTT broker");
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
 });
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (err) => {
+  console.error("Unhandled Rejection:", err);
+  // Close server & exit
+  process.exit(1);
+});
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  process.exit(1);
+});
+
+module.exports = app;
